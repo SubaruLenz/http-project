@@ -35,7 +35,24 @@ class _MyHomePageState extends State<MyHomePage> {
   String _data = '';
 
   Future<void> fetchData() async {
-    var url = Uri.parse('http://127.0.0.1:8000/get');
+    var id = 1;
+    var url = Uri.parse('http://127.0.0.1:8000/template/$id');
+    var response = await http.get(url);
+    if (response.statusCode == 200){
+      print('Data fetch sucessfully! : ${response.statusCode}');
+      setState(() {
+        _data = response.body;
+      });
+    } else {
+      print('Data fetch failed!');
+      setState(() {
+        _data = 'Data fetch failed! : ${response.statusCode}';
+      });
+    }
+  } 
+
+  Future<void> getData(String id) async {
+    var url = Uri.parse('http://127.0.0.1:8000/template/$id');
     var response = await http.get(url);
     if (response.statusCode == 200){
       print('Data fetch sucessfully! : ${response.statusCode}');
@@ -82,6 +99,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    String id = "0";
+    TextEditingController idController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -93,10 +112,24 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton(onPressed: fetchData, child: Text('Fetch Data')),
-                ElevatedButton(onPressed: createData, child: Text('Create Data')),
-                ElevatedButton(onPressed: deleteData, child: Text('Update Data')),
+                ElevatedButton(onPressed: fetchData, child: const Text('Fetch Data')),
+                ElevatedButton(onPressed: () {
+                  setState(() {
+                    id = idController.text;
+                    getData(id);
+                  });
+                }, child: const Text('Get Data')),
+                ElevatedButton(onPressed: createData, child: const Text('Create Data')),
+                ElevatedButton(onPressed: deleteData, child: const Text('Update Data')),
               ],
+            ),
+            TextField(
+              controller: idController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter an Id'
+              ),
+              keyboardType: TextInputType.number,
             ),
             Expanded(child: SingleChildScrollView(
               child: Text(_data),
