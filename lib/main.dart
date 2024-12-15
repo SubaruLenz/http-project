@@ -35,23 +35,23 @@ class _MyHomePageState extends State<MyHomePage> {
   String _data = '';
 
   Future<void> fetchData() async {
-    var url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');
+    var url = Uri.parse('http://127.0.0.1:8000/get');
     var response = await http.get(url);
     if (response.statusCode == 200){
-      print('Data fetch sucessfully! : ${response.body}');
+      print('Data fetch sucessfully! : ${response.statusCode}');
       setState(() {
         _data = response.body;
       });
     } else {
       print('Data fetch failed!');
       setState(() {
-        _data = 'Data fetch failed!';
+        _data = 'Data fetch failed! : ${response.statusCode}';
       });
     }
   } 
 
   Future<void> createData() async{
-    var url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
+    var url = Uri.parse('http://127.0.0.1:8000/post');
     var response = await http.post(url, body: {'tittle':'New Post', 'body':'Here is the body', 'userId':'1'});
     if (response.statusCode == 200 || response.statusCode == 201){
       setState(() {
@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> deleteData() async {
-    var url = Uri.parse('https://jsonplaceholder.typicode.com/posts/101');
+    var url = Uri.parse('http://127.0.0.1:8000/');
     var response = await http.delete(url);
     if (response.statusCode == 200 || response.statusCode == 201){
       print('Data fetch sucessfully! : ${response.body}');
